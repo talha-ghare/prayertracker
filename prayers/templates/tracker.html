@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .checkbox-group {
+            margin-bottom: 15px;
+        }
+        .number-input {
+            margin-top: 20px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prayer Tracker</h1>
+    
+    <div class="tabs">
+        {% for prayer in prayers %}
+        <div class="tab {% if forloop.first %}active{% endif %}" onclick="openTab('{{ prayer.id }}')">
+            {{ prayer.name }}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% for prayer in prayers %}
+        <div id="{{ prayer.id }}" class="tab-content {% if forloop.first %}active{% endif %}">
+            <h2>{{ prayer.name }} Prayer</h2>
+            
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="{{ prayer.id }}_on_time" value="yes">
+                    Did you pray on time?
+                </label>
+            </div>
+            
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="{{ prayer.id }}_jamat" value="yes">
+                    Did you pray with Jamat?
+                </label>
+            </div>
+            
+            <div class="number-input">
+                <label for="{{ prayer.id }}_number">Enter a number:</label>
+                <input type="number" id="{{ prayer.id }}_number" name="{{ prayer.id }}_number">
+            </div>
+        </div>
+        {% endfor %}
+        
+        <button type="submit" style="margin-top: 20px; padding: 10px 20px;">Save</button>
+    </form>
+    
+    <script>
+        function openTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Show the selected tab content and mark tab as active
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
